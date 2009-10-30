@@ -1,0 +1,63 @@
+
+  <Object type="ControlLibrary.UIForm, ControlLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="UIForm1" children="Controls">
+    <Object type="ControlLibrary.UIButton, ControlLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="UIButton1" children="Controls">
+      <Property name="DisplayName">UIButton1</Property>
+      <Property name="Size">75, 23</Property>
+      <Property name="BeforeScaleLocation">0, 0</Property>
+      <Property name="DisplayText">按钮</Property>
+      <Property name="ScaleFlag">0</Property>
+      <Property name="BeforeScaleSize">0, 0</Property>
+      <Property name="Text">Apply</Property>
+      <Property name="Name">UIButton1</Property>
+      <Property name="UseVisualStyleBackColor">True</Property>
+      <Property name="ForeColor">0, 0, 0</Property>
+      <Property name="BeforeScaleFont" />
+      <Property name="Location">115, 257</Property>
+      <Property name="DataBindings">
+        <Property name="DefaultDataSourceUpdateMode">OnValidation</Property>
+      </Property>
+      <Property name="ToolTipsData" />
+      <Property name="TabIndex">1</Property>
+      <Property name="Font">Courier New, 9pt</Property>
+    </Object>
+    <Object type="ControlLibrary.UIListBox, ControlLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="UIListBox1" children="Controls">
+      <Property name="Dock">Top</Property>
+      <Property name="FormattingEnabled">True</Property>
+      <Property name="DisplayName">UIListBox1</Property>
+      <Property name="Size">300, 244</Property>
+      <Property name="DataBindings">
+        <Property name="DefaultDataSourceUpdateMode">OnValidation</Property>
+      </Property>
+      <Property name="DisplayText">列表框</Property>
+      <Property name="Items">
+        <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">QQ.exe</Item>
+        <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">FeiQ.exe</Item>
+        <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">BaiduHi.exe</Item>
+        <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">XiaoNei.exe</Item>
+        <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">FeiXin.exe</Item>
+        <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Iexplorer.exe</Item>
+      </Property>
+      <Property name="ItemHeight">15</Property>
+      <Property name="Name">UIListBox1</Property>
+      <Property name="ForeColor">0, 0, 0</Property>
+      <Property name="BackColor">255, 255, 255</Property>
+      <Property name="ToolTipsData" />
+      <Property name="Location">0, 0</Property>
+      <Property name="TabIndex">0</Property>
+      <Property name="Font">Courier New, 9pt</Property>
+    </Object>
+    <Property name="DisplayName">主窗体</Property>
+    <Property name="MaximizeBox">False</Property>
+    <Property name="Text">Select IM Process</Property>
+    <Property name="ClientSize">300, 292</Property>
+    <Property name="Location">15, 15</Property>
+    <Property name="MinimizeBox">False</Property>
+    <Property name="BackColor">236, 233, 216</Property>
+    <Property name="ForeColor">0, 0, 0</Property>
+    <Property name="Name">UIForm1</Property>
+    <Property name="Font">Courier New, 9pt</Property>
+    <Property name="DataBindings">
+      <Property name="DefaultDataSourceUpdateMode">OnValidation</Property>
+    </Property>
+  </Object>
+<Event source="UIButton1" dest="null" action="单击(Click)" property="Close" solution="" enable="true" type="together0" eventID="01"></Event>
