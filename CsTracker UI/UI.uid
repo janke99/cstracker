@@ -1,0 +1,153 @@
+
+  <Object type="ControlLibrary.UIForm, ControlLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="UIForm1" children="Controls">
+    <Object type="ControlLibrary.UIButton, ControlLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="UIButton3" children="Controls">
+      <Property name="DisplayName">UIButton3</Property>
+      <Property name="Size">75, 34</Property>
+      <Property name="BeforeScaleLocation">0, 0</Property>
+      <Property name="DisplayText">按钮</Property>
+      <Property name="ScaleFlag">0</Property>
+      <Property name="BeforeScaleSize">0, 0</Property>
+      <Property name="Text">Start</Property>
+      <Property name="Name">UIButton3</Property>
+      <Property name="UseVisualStyleBackColor">True</Property>
+      <Property name="ForeColor">0, 0, 0</Property>
+      <Property name="BeforeScaleFont" />
+      <Property name="Location">472, 301</Property>
+      <Property name="DataBindings">
+        <Property name="DefaultDataSourceUpdateMode">OnValidation</Property>
+      </Property>
+      <Property name="ToolTipsData" />
+      <Property name="TabIndex">5</Property>
+      <Property name="Font">Courier New, 9pt</Property>
+    </Object>
+    <Object type="ControlLibrary.UIButton, ControlLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="UIButton2" children="Controls">
+      <Property name="DisplayName">UIButton2</Property>
+      <Property name="Size">75, 34</Property>
+      <Property name="BeforeScaleLocation">0, 0</Property>
+      <Property name="DisplayText">按钮</Property>
+      <Property name="ScaleFlag">0</Property>
+      <Property name="BeforeScaleSize">0, 0</Property>
+      <Property name="Text">Set</Property>
+      <Property name="Name">UIButton2</Property>
+      <Property name="UseVisualStyleBackColor">True</Property>
+      <Property name="ForeColor">0, 0, 0</Property>
+      <Property name="BeforeScaleFont" />
+      <Property name="Location">238, 302</Property>
+      <Property name="DataBindings">
+        <Property name="DefaultDataSourceUpdateMode">OnValidation</Property>
+      </Property>
+      <Property name="ToolTipsData" />
+      <Property name="TabIndex">4</Property>
+      <Property name="Font">Courier New, 9pt</Property>
+    </Object>
+    <Object type="ControlLibrary.UIButton, ControlLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="UIButton1" children="Controls">
+      <Property name="DisplayName">UIButton1</Property>
+      <Property name="Size">75, 35</Property>
+      <Property name="BeforeScaleLocation">0, 0</Property>
+      <Property name="DisplayText">按钮</Property>
+      <Property name="ScaleFlag">0</Property>
+      <Property name="BeforeScaleSize">0, 0</Property>
+      <Property name="Text">Select</Property>
+      <Property name="Name">UIButton1</Property>
+      <Property name="UseVisualStyleBackColor">True</Property>
+      <Property name="ForeColor">0, 0, 0</Property>
+      <Property name="BeforeScaleFont" />
+      <Property name="Location">17, 301</Property>
+      <Property name="DataBindings">
+        <Property name="DefaultDataSourceUpdateMode">OnValidation</Property>
+      </Property>
+      <Property name="ToolTipsData" />
+      <Property name="TabIndex">3</Property>
+      <Property name="Font">Courier New, 9pt</Property>
+    </Object>
+    <Object type="ControlLibrary.UITextBox, ControlLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="UITextBox2" children="Controls">
+      <Property name="Multiline">True</Property>
+      <Property name="DisplayName">UITextBox2</Property>
+      <Property name="Size">278, 97</Property>
+      <Property name="DataBindings">
+        <Property name="DefaultDataSourceUpdateMode">OnValidation</Property>
+      </Property>
+      <Property name="DisplayText">文本框</Property>
+      <Property name="Text">Packet Content:Char
+| PX?Y遠&#x13;缭峰湪&#x11;渴匉? 
+膬O誡w(踣?亵?椐鞖? 
+??j?1茢?B鵏H?&#x10;  
+?粎妩3赵d餱?2礉?H  
+鍝r嗷w]	圡鄠"&#x1A;?娄]礳  
+&#xE;r姪&#x1D;e繄?瘜Mv?&#x3;伥? 
+AB 82 96 9C F8 37 FF 38 5E 0C 0E 4D C3 F2 DF 5C DA B2 15 3A  | 珎枩?8^&#xC;&#xE;M抿運诓&#x15;:  
+15 41 91 24 7A 76 B5 72 E1 46 C5 64 72 1C EC 03              | &#x15;A?zv祌酕興r&#x1C;?  </Property>
+      <Property name="Font">宋体, 9pt</Property>
+      <Property name="ForeColor">0, 0, 0</Property>
+      <Property name="BackColor">255, 255, 255</Property>
+      <Property name="Location">281, 199</Property>
+      <Property name="ToolTipsData" />
+      <Property name="Name">UITextBox2</Property>
+      <Property name="TabIndex">2</Property>
+    </Object>
+    <Object type="ControlLibrary.UITextBox, ControlLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="UITextBox1" children="Controls">
+      <Property name="Multiline">True</Property>
+      <Property name="DisplayName">UITextBox1</Property>
+      <Property name="Size">282, 97</Property>
+      <Property name="DataBindings">
+        <Property name="DefaultDataSourceUpdateMode">OnValidation</Property>
+      </Property>
+      <Property name="DisplayText">文本框</Property>
+      <Property name="Text">Packet Content:Hex
+02 19 0F 00 A6 56 8F 11 BF CA 84 FA DC  
+C4 83 4F D5 5D 77 28 F5 DB F0 2B D9 F4 DD 0B E9 A7 EC 9A F9 
+BB 2E FE 26 6A 91 12 31 C6 94 DD 7F 42 F9 4C 48 7F 94 22 10 
+99 2F BB 85 E5 FC 33 D5 D4 64 F0 66 99 19 32 B4 9D AC 0E 48  | ?粎妩3赵d餱?2礉?H  
+E5 93 72 E0 BB 77 5D 09 88 4D E0 82 22 1A 3F C2 A6 5D B5 63  | 鍝r嗷w]	圡鄠"&#x1A;?娄]礳  
+E5 4B D5 10 7A 88 A1 37 D7 19 17 05 77 CE F8 FB 32 AC 82 E9  | 錕?z垺7?&#x17;&#x5;w硒?瑐? 
+72 9E E3 B2 A2 1E A2 FE E5 9E 06 CE 59 C0 87 93 84 DD 5B 55  | r炪并&#x1E;鍨&#x6;蝁绹搫輀U  
+29 5C 8B 8D 9D 12 DE B6 63 14 19 A9 9B B7 CA 8F 67 2D CA E6  | )\媿?薅c&#x14;&#x19;肥廹-舒  
+AA E7 45 E3 84 E3 C9 A4 AC 49 A2 19 1F 66 27 14 FC AA F2 BD  | E銊闵がI?&#x1F;f'&#x14;蚪  
+ED C5 A5 2F 58 E8 A0 E5 CF A2 03 72 77 48 E1 93 3B 1C A6 35  | 砼?X锠逑?rwH釗;&#x1C;?  
+0E 72 8A A9 1D 65 BF 88 E0 2C AF 8C 4D 76 B3 08 03 D8 F6 AA  | &#xE;r姪&#x1D;e繄?瘜Mv?&#x3;伥? 
+AB 82 96 9C F8 37 FF 38 5E 0C 0E 4D C3 F2 DF 5C DA B2 15 3A  | 珎枩?8^&#xC;&#xE;M抿運诓&#x15;:  
+15 41 91 24 7A 76 B5 72 E1 46 C5 64 72 1C EC 03              | &#x15;A?zv祌酕興r&#x1C;?  </Property>
+      <Property name="Font">宋体, 9pt</Property>
+      <Property name="ForeColor">0, 0, 0</Property>
+      <Property name="BackColor">255, 255, 255</Property>
+      <Property name="Location">0, 199</Property>
+      <Property name="ToolTipsData" />
+      <Property name="Name">UITextBox1</Property>
+      <Property name="TabIndex">1</Property>
+    </Object>
+    <Object type="ControlLibrary.UIListBox, ControlLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="UIListBox1" children="Controls">
+      <Property name="Dock">Top</Property>
+      <Property name="FormattingEnabled">True</Property>
+      <Property name="DisplayName">UIListBox1</Property>
+      <Property name="Size">559, 199</Property>
+      <Property name="DataBindings">
+        <Property name="DefaultDataSourceUpdateMode">OnValidation</Property>
+      </Property>
+      <Property name="ScrollAlwaysVisible">True</Property>
+      <Property name="DisplayText">列表框</Property>
+      <Property name="Items">
+        <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">List Control Report</Item>
+        <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Packet Info Report</Item>
+      </Property>
+      <Property name="ItemHeight">15</Property>
+      <Property name="Name">UIListBox1</Property>
+      <Property name="ForeColor">0, 0, 0</Property>
+      <Property name="BackColor">255, 255, 255</Property>
+      <Property name="ToolTipsData" />
+      <Property name="Location">0, 0</Property>
+      <Property name="TabIndex">0</Property>
+      <Property name="Font">Courier New, 9pt</Property>
+    </Object>
+    <Property name="DisplayName">主窗体</Property>
+    <Property name="Text">CsTracker    C/S Program Packet Tracer</Property>
+    <Property name="ClientSize">559, 347</Property>
+    <Property name="Location">15, 15</Property>
+    <Property name="BackColor">236, 233, 216</Property>
+    <Property name="ForeColor">0, 0, 0</Property>
+    <Property name="Name">UIForm1</Property>
+    <Property name="Font">Courier New, 9pt</Property>
+    <Property name="DataBindings">
+      <Property name="DefaultDataSourceUpdateMode">OnValidation</Property>
+    </Property>
+  </Object>
+<Event source="UIButton3" dest="null" action="单击(Click)" property="ChangeProperty" solution="3" enable="true" type="together0" eventID="01">000001000000000255255255255001000000000000000000000012002000000000069067111110116114111108076105098114097114121044032086101114115105111110061049046048046048046048044032067117108116117114101061110101117116114097108044032080117098108105099075101121084111107101110061110117108108005001000000000033067111110116114111108076105098114097114121046067104097110103101080114111112101114116121076105115116001000000000015099104097110103101065114114097121076105115116003028083121115116101109046067111108108101099116105111110115046065114114097121076105115116002000000000009003000000000004003000000000028083121115116101109046067111108108101099116105111110115046065114114097121076105115116003000000000006095105116101109115005095115105122101008095118101114115105111110005000000008008009004000000000003000000000003000000000016004000000000004000000000009005000000000009006000000000009007000000000010005005000000000032067111110116114111108076105098114097114121046080114111112101114116121086097108117101076105115116003000000000010111098106101099116078097109101017112114111112101114116121065114114097121076105115116014118097108117101065114114097121076105115116001003003028083121115116101109046067111108108101099116105111110115046065114114097121076105115116028083121115116101109046067111108108101099116105111110115046065114114097121076105115116002000000000006008000000000009085073066117116116111110051009009000000000009010000000000001006000000000005000000000006011000000000010085073084101120116066111120049009012000000000009013000000000001007000000000005000000000006014000000000010085073084101120116066111120050009015000000000009016000000000001009000000000003000000000009017000000000001000000000001000000000001010000000000003000000000009018000000000001000000000008000000000001012000000000003000000000009019000000000001000000000001000000000001013000000000003000000000009020000000000001000000000013000000000001015000000000003000000000009021000000000001000000000001000000000001016000000000003000000000009022000000000001000000000001000000000016017000000000004000000000006023000000000004084101120116013003016018000000000004000000000006024000000000004083116111112013003016019000000000004000000000006025000000000004084101120116013003016020000000000004000000000006026000000000000013003016021000000000004000000000009025000000000013003016022000000000004000000000006028000000000000013003011</Event><Event source="UIButton1" dest="null" action="单击(Click)" property="OpenUID" solution="D:\Project\CsTracker\CsTracker UI" enable="true" type="together0" eventID="01">D:\Project\CsTracker\CsTracker UI\Select Dialog.uid</Event><Event source="UIButton2" dest="null" action="单击(Click)" property="OpenUID" solution="D:\Project\CsTracker\CsTracker UI" enable="true" type="together0" eventID="01">D:\Project\CsTracker\CsTracker UI\Set Dialog.uid</Event><Mark></Mark>

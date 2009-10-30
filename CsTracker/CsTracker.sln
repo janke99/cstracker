@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CsTracker", "CsTracker\CsTracker.vcproj", "{2D7B8437-1622-4309-96D2-93253499D8BB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Dll", "Dll\Dll.vcproj", "{6346478B-64A3-4DE1-8510-9087935B89CD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2D7B8437-1622-4309-96D2-93253499D8BB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2D7B8437-1622-4309-96D2-93253499D8BB}.Debug|Win32.Build.0 = Debug|Win32
+		{2D7B8437-1622-4309-96D2-93253499D8BB}.Release|Win32.ActiveCfg = Release|Win32
+		{2D7B8437-1622-4309-96D2-93253499D8BB}.Release|Win32.Build.0 = Release|Win32
+		{6346478B-64A3-4DE1-8510-9087935B89CD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6346478B-64A3-4DE1-8510-9087935B89CD}.Debug|Win32.Build.0 = Debug|Win32
+		{6346478B-64A3-4DE1-8510-9087935B89CD}.Release|Win32.ActiveCfg = Release|Win32
+		{6346478B-64A3-4DE1-8510-9087935B89CD}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
