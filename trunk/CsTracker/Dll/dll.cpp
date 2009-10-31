@@ -6,11 +6,67 @@
 #include <windows.h>
 #include <winnt.h>
 
+#define AFD_RECV		0x12017
+#define AFD_BIND		0x12003
+#define AFD_CONNECT		0x12007
+#define AFD_SET_CONTEXT	0x12047
+#define AFD_RECV		0x12017
+#define AFD_SEND		0x1201f
+#define AFD_SELECT		0x12024
+#define AFD_SENDTO		0x12023 
+#define AFD_RECVFROM	0x1201B
+#define CV				0x1201f
+
+#define NT_SUCCESS(Status) (((NTSTATUS)(Status)) >= 0)
+
+typedef struct _IO_STATUS_BLOCK {
+	union {
+		NTSTATUS Status;
+		PVOID Pointer;
+	} DUMMYUNIONNAME;
+
+	ULONG_PTR Information;
+} IO_STATUS_BLOCK, *PIO_STATUS_BLOCK;
+
+typedef
+VOID
+(NTAPI *PIO_APC_ROUTINE) (
+						  IN PVOID ApcContext,
+						  IN PIO_STATUS_BLOCK IoStatusBlock,
+						  IN ULONG Reserved
+						  );
+
+typedef NTSTATUS (*NTDEVICEIOCONTROLFILE)(IN HANDLE FileHandle,
+										  IN HANDLE Event OPTIONAL,
+										  IN PIO_APC_ROUTINE ApcRoutine OPTIONAL,
+										  IN PVOID ApcContext OPTIONAL,
+										  OUT PIO_STATUS_BLOCK IoStatusBlock,
+										  IN ULONG IoControlCode,
+										  IN PVOID InputBuffer OPTIONAL,
+										  IN ULONG InputBufferLength,
+										  OUT PVOID OutputBuffer OPTIONAL,
+										  IN ULONG OutputBufferLength);
+
+NTDEVICEIOCONTROLFILE ZwDeviceIoControlFile = NULL;
+
+
 // Hook NtDeviceIoControlFile()
 BOOL HookApi(BOOL bFlag);
 
+// New Hook Function
+NTSTATUS NewDeviceIoControlFile(IN HANDLE FileHandle,
+								IN HANDLE Event OPTIONAL,
+								IN PIO_APC_ROUTINE ApcRoutine OPTIONAL,
+								IN PVOID ApcContext OPTIONAL,
+								OUT PIO_STATUS_BLOCK IoStatusBlock,
+								IN ULONG IoControlCode,
+								IN PVOID InputBuffer OPTIONAL,
+								IN ULONG InputBufferLength,
+								OUT PVOID OutputBuffer OPTIONAL,
+								IN ULONG OutputBufferLength);
 
-int DllMain(__in void * _HDllHandle, __in unsigned _Reason, __in_opt void * _Reserved)
+
+int WINAPI DllMain(__in void * _HDllHandle, __in unsigned _Reason, __in_opt void * _Reserved)
 {
 	if (_Reason == DLL_PROCESS_ATTACH)
 	{
@@ -30,7 +86,7 @@ int DllMain(__in void * _HDllHandle, __in unsigned _Reason, __in_opt void * _Res
 //////////////////////////////////////////////////////////////////////////
 BOOL HookApi(BOOL bFlag)
 {
-	HMODULE hModule = LoadLibrary("mswsock.dll");
+	HMODULE hModule = LoadLibrary(TEXT("mswsock.dll"));
 	if (hModule == NULL)
 	{
 		return FALSE;
@@ -72,11 +128,19 @@ BOOL HookApi(BOOL bFlag)
 			char* funame = (PCHAR)((ULONG)hModule+ThunkData->u1.AddressOfData+2);
 			if (stricmp(funame,"NtDeviceIoControlFile") == 0)
 			{
-				ULONG myAdr = (ULONG)NewDeviceIoControlFile;
-				ULONG dwRet;
+				ULONG dwRet,myAdr;
 				PDWORD lpAdr = (PDWORD)((ULONG)hModule+(DWORD)pImportDescriptor->FirstThunk)+index-1;
-				NtDeviceIoControlFile = (PVOID)(*(ULONG*)lpAdr);
+				ZwDeviceIoControlFile = (NTDEVICEIOCONTROLFILE)(*(ULONG*)lpAdr);
+				if (bFlag)
+				{
+					myAdr = (ULONG)NewDeviceIoControlFile;
+				}
+				else
+				{
+					myAdr = (ULONG)ZwDeviceIoControlFile;
+				}
 				WriteProcessMemory(GetCurrentProcess(),lpAdr,&myAdr,sizeof(ULONG),&dwRet);
+				
 				return TRUE;
 			}
 			index++;
@@ -86,4 +150,68 @@ BOOL HookApi(BOOL bFlag)
 	}
 
 	return FALSE;
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+// New Hook Function
+//////////////////////////////////////////////////////////////////////////
+NTSTATUS NewDeviceIoControlFile(IN HANDLE FileHandle,
+								IN HANDLE Event OPTIONAL,
+								IN PIO_APC_ROUTINE ApcRoutine OPTIONAL,
+								IN PVOID ApcContext OPTIONAL,
+								OUT PIO_STATUS_BLOCK IoStatusBlock,
+								IN ULONG IoControlCode,
+								IN PVOID InputBuffer OPTIONAL,
+								IN ULONG InputBufferLength,
+								OUT PVOID OutputBuffer OPTIONAL,
+								IN ULONG OutputBufferLength)
+{
+	NTSTATUS status;
+	status = ZwDeviceIoControlFile(FileHandle,Event,ApcRoutine,ApcContext,IoStatusBlock,IoControlCode,InputBuffer,InputBufferLength,OutputBuffer,OutputBufferLength);
+	if (!NT_SUCCESS(status))
+	{
+		return status;
+	}
+
+	if (IoControlCode!=AFD_SEND && IoControlCode!=AFD_RECV && IoControlCode!=AFD_SENDTO && IoControlCode!=AFD_RECVFROM)
+	{
+		return status;
+	}
+
+	__try{
+		//PAFD_INFO AfdInfo = (PAFD_INFO)InputBuffer;
+		//PVOID Buffer = AfdInfo->BufferArray->buf;
+		//ULONG Len = AfdInfo->BufferArray->len;
+
+		switch (IoControlCode)
+		{
+		case AFD_RECV:
+			{
+				OutputDebugStringA("[TCP Recv Packets]\n");
+			}
+			break;
+		case AFD_SEND:
+			{
+				OutputDebugStringA("[TCP Send Packets]\n");
+			}
+			break;
+		case AFD_SENDTO:
+			{
+				OutputDebugStringA("[UDP Sendto Packets]\n");
+			}
+			break;
+		case AFD_RECVFROM:
+			{
+				OutputDebugStringA("[UDP RecvFrom Packets]\n");
+			}
+			break;
+		}
+	}__except(EXCEPTION_EXECUTE_HANDLER)
+	{
+		return status;
+	}
+
+	return status;
 }
