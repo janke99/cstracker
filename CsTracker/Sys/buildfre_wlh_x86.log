@@ -1,0 +1,7 @@
+BUILD: Examining d:\project\cstrac~1\cstrac~1\sys directory for files to compile.
+skipping post pass 0 command
+Compiling and Linking d:\project\cstrac~1\cstrac~1\sys *************
+'nmake.exe /nologo BUILDMSG=Stop. -i BUILD_PASS=PASS2 LINKONLY=1 NOPASS0=1 MAKEDIR_RELATIVE_TO_BASEDIR='
+d:\project\cstrac~1\cstrac~1\sys: TARGETPATH is obj
+ cl.exe @d:\project\cstrac~1\cstrac~1\sys\objfre_wlh_x86\i386\cl.rsp
+ link.exe /out:d:\project\cstrac~1\cstrac~1\sys\objfre_wlh_x86\i386\Sys.sys /machine:ix86 @d:\project\cstrac~1\cstrac~1\sys\objfre_wlh_x86\i386\lnk.rsp

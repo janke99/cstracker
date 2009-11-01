@@ -8,6 +8,7 @@
 // 头文件包含
 //////////////////////////////////////////////////////////////////////////
 #include <ntddk.h>
+#include "shared.h"
 
 //////////////////////////////////////////////////////////////////////////
 //宏定义
@@ -262,6 +263,12 @@ NewDeviceIoControlFile(__in HANDLE FileHandle,
 {
 
 	NTSTATUS status;
+	int i =0;
+	PAFD_SEND_INFO		pAfdTcpInfo			= InputBuffer;
+	PAFD_SEND_INFO_UDP	pAfdUdpSendtoInfo	= InputBuffer;
+	PAFD_RECV_INFO_UDP	pAfdUdpRecvFromInfo = InputBuffer;
+	ULONG	dwLen = 0;
+	PCHAR	pBuf = NULL;
 	NTDEVICEIOCONTROLFILE NtDeviceIoControlFile = Zdicf.NtFunc;
 
 	status = NtDeviceIoControlFile(FileHandle,Event,ApcRoutine,ApcContext,IoStatusBlock,IoControlCode,InputBuffer,InputBufferLength,OutputBuffer,OutputBufferLength);
@@ -274,38 +281,48 @@ NewDeviceIoControlFile(__in HANDLE FileHandle,
 	{
 		return status;
 	}
-
 	__try{
-		//PAFD_INFO AfdInfo = (PAFD_INFO)InputBuffer;
-		//PVOID Buffer = AfdInfo->BufferArray->buf;
-		//ULONG Len = AfdInfo->BufferArray->len;
-
 		switch (IoControlCode)
 		{
 		case AFD_RECV:
 			{
-				DbgPrint("[TCP Recv Packets]\n");
+
+				dwLen = pAfdTcpInfo->BufferArray->len;
+				pBuf  = pAfdTcpInfo->BufferArray->buf;
+				DbgPrint("[Recv][%d]\n",PsGetCurrentProcessId());
 			}
 			break;
 		case AFD_SEND:
 			{
-				DbgPrint("[TCP Send Packets]\n");
+				dwLen = pAfdTcpInfo->BufferArray->len;
+				pBuf  = pAfdTcpInfo->BufferArray->buf;
+				DbgPrint("[Send][%d]\n",PsGetCurrentProcessId());
 			}
 			break;
 		case AFD_SENDTO:
 			{
-				DbgPrint("[UDP Sendto Packets]\n");
+				dwLen = pAfdUdpSendtoInfo->BufferArray->len;
+				pBuf  = pAfdUdpSendtoInfo->BufferArray->buf;
+				DbgPrint("[Sendto][%d]\n",PsGetCurrentProcessId());
 			}
 			break;
 		case AFD_RECVFROM:
 			{
-				DbgPrint("[UDP RecvFrom Packets]\n");
+				dwLen = pAfdUdpRecvFromInfo->BufferArray->len;
+				pBuf  = pAfdUdpRecvFromInfo->BufferArray->buf;
+				DbgPrint("[Recvfrom][%d]\n",PsGetCurrentProcessId());
 			}
 			break;
 		}
 	}__except(EXCEPTION_EXECUTE_HANDLER)
 	{
 		return status;
+	}
+
+	DbgPrint("%s\n",pBuf);
+	for (i=0;i<dwLen;i++)
+	{
+		DbgPrint("%x",pBuf[i]);
 	}
 
 	return status;
