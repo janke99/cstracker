@@ -4,14 +4,14 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 -----------------------------------------------------------------------------
 Contents of defect log: PREfast_defects_chk_wlh_x86.xml
 -----------------------------------------------------------------------------
-d:\project\cstracker\cstracker\sys\sys.c (217): warning 28159: Consider using 'IoAllocateMdl' instead of 'MmCreateMdl'. Reason:  Obsolete.
-	FUNCTION: SsdtHook (212)
+d:\project\cstracker\cstracker\sys\sys.c (218): warning 28159: Consider using 'IoAllocateMdl' instead of 'MmCreateMdl'. Reason:  Obsolete.
+	FUNCTION: SsdtHook (213)
 
-d:\project\cstracker\cstracker\sys\sys.c (225): warning 28145: The opaque MDL structure should not be modified by a driver.
-	FUNCTION: SsdtHook (212)
+d:\project\cstracker\cstracker\sys\sys.c (226): warning 28145: The opaque MDL structure should not be modified by a driver.
+	FUNCTION: SsdtHook (213)
 
-d:\project\cstracker\cstracker\sys\sys.c (226): warning 28159: Consider using 'MmMapLockedPagesSpecifyCache' instead of 'MmMapLockedPages'. Reason:  Obsolete except on Windows 98.  Use MmGetSystemAddressForMdlSafe if this is a call to MmGetSystemAddressForMdl..
-	FUNCTION: SsdtHook (212)
+d:\project\cstracker\cstracker\sys\sys.c (227): warning 28159: Consider using 'MmMapLockedPagesSpecifyCache' instead of 'MmMapLockedPages'. Reason:  Obsolete except on Windows 98.  Use MmGetSystemAddressForMdlSafe if this is a call to MmGetSystemAddressForMdl..
+	FUNCTION: SsdtHook (213)
 
 -----------------------------------------------------------------------------
 3 of 3 Defects Listed

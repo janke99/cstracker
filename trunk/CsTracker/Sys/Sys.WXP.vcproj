@@ -17,6 +17,7 @@
 	<Configurations>
 		<Configuration
 			Name="WXP free|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory=".\"
 			ConfigurationType="0"
 			InheritedPropertySheets=".\Sys.vsprops"
@@ -118,6 +119,7 @@
 		</Configuration>
 		<Configuration
 			Name="WXP2K checked (PREfast)|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory=".\"
 			ConfigurationType="0"
 			InheritedPropertySheets=".\Sys.vsprops"
@@ -153,6 +155,10 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx"
 			>
+			<File
+				RelativePath=".\shared.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
