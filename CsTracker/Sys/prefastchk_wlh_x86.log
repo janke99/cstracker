@@ -1,0 +1,21 @@
+-----------------------------------------------------------------------------
+Microsoft (R) PREfast Version 8.0.50727.80118.
+Copyright (C) Microsoft Corporation. All rights reserved.
+-----------------------------------------------------------------------------
+Contents of defect log: PREfast_defects_chk_wlh_x86.xml
+-----------------------------------------------------------------------------
+d:\project\cstracker\cstracker\sys\sys.c (217): warning 28159: Consider using 'IoAllocateMdl' instead of 'MmCreateMdl'. Reason:  Obsolete.
+	FUNCTION: SsdtHook (212)
+
+d:\project\cstracker\cstracker\sys\sys.c (225): warning 28145: The opaque MDL structure should not be modified by a driver.
+	FUNCTION: SsdtHook (212)
+
+d:\project\cstracker\cstracker\sys\sys.c (226): warning 28159: Consider using 'MmMapLockedPagesSpecifyCache' instead of 'MmMapLockedPages'. Reason:  Obsolete except on Windows 98.  Use MmGetSystemAddressForMdlSafe if this is a call to MmGetSystemAddressForMdl..
+	FUNCTION: SsdtHook (212)
+
+-----------------------------------------------------------------------------
+3 of 3 Defects Listed
+Filter in effect: drivers_recommended
+-----------------------------------------------------------------------------
+You can change the filter and sort options from the user interface.
+Enter PREFAST VIEW to display the defect log user interface.

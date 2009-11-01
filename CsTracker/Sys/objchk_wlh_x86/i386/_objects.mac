@@ -1,0 +1,16 @@
+
+
+386_OBJECTS=\
+ $(OBJ_PATH)\$O\sys.obj \
+
+
+
+
+
+# lowercased
+BASEDIR=c:\winddk\6001~1.180
+OBJECT_ROOT=c:\winddk\6001~1.180
+MAKEDIR_LOWERCASE=d:\project\cstrac~1\cstrac~1\sys
+OBJ_PATH=d:\project\cstrac~1\cstrac~1\sys
+CONCURRENT_MIDL=0
+CONCURRENT_MANIFEST_BUILD=0
