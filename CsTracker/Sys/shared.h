@@ -11,6 +11,17 @@
 #define AFD_PACKET_COMMAND_LENGTH	15
 #define AfdCommand "AfdOpenPacketXX"
 
+//////////////////////////////////////////////////////////////////////////
+//自定义结构
+//////////////////////////////////////////////////////////////////////////
+//IO Control Code
+#define StartMonitor	CTL_CODE(FILE_DEVICE_UNKNOWN,0x811,METHOD_BUFFERED,FILE_ANY_ACCESS)
+#define StopMonitor		CTL_CODE(FILE_DEVICE_UNKNOWN,0x812,METHOD_BUFFERED,FILE_ANY_ACCESS)
+#define SetMonitor		CTL_CODE(FILE_DEVICE_UNKNOWN,0x813,METHOD_BUFFERED,FILE_ANY_ACCESS)
+
+
+
+
 /* Extra definition of WSABUF for AFD so that I don't have to include any
  * userland winsock headers. */
 typedef unsigned int UINT;

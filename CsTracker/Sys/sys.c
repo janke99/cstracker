@@ -60,6 +60,9 @@ typedef struct Hook{
 	ULONG	NtFunc;		//保存原始函数地址
 }Hook,*pHook;
 
+AFD_WSABUF Packet;
+KMUTEX	kMutex;
+
 //////////////////////////////////////////////////////////////////////////
 //全局变量声明
 //////////////////////////////////////////////////////////////////////////
@@ -70,6 +73,8 @@ UNICODE_STRING device_name = RTL_CONSTANT_STRING(L"\\Device\\CsTracker");
 UNICODE_STRING symb_link = RTL_CONSTANT_STRING(L"\\DosDevices\\CsTracker");
 //Hook ZwDeviceIoControlFile
 Hook Zdicf;
+//事件对象
+PVOID	pEventObject = NULL;
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -80,7 +85,9 @@ VOID OnUnload(PDRIVER_OBJECT DriverObject);
 //Io控制函数
 NTSTATUS DeviceControl(PDEVICE_OBJECT pDeviceObject,PIRP pIrp);
 //打开或者关闭设备
-NTSTATUS CreateClose(PDEVICE_OBJECT DeviceObject,PIRP irp);\
+NTSTATUS CreateClose(PDEVICE_OBJECT DeviceObject,PIRP irp);
+//读取数据
+NTSTATUS ReadPacket(PDEVICE_OBJECT DeviceObject,PIRP irp);
 // Ssdt Hook ZwDeviceIoControlFile
 NTSTATUS SsdtHook(pHook pInfo,BOOLEAN bFlag);
 // New Hook Function
@@ -119,6 +126,7 @@ NTSTATUS DriverEntry(__in PDRIVER_OBJECT pDriverObject,
 	{
 		return status;
 	}
+	device->Flags |= DO_BUFFERED_IO;
 
 	//生成符号链接
 	status = IoCreateSymbolicLink(&symb_link,&device_name);
@@ -131,7 +139,8 @@ NTSTATUS DriverEntry(__in PDRIVER_OBJECT pDriverObject,
 	//Hook ZwDeviceIoControlFile
 	Zdicf.ZwIndex = HOOK_INDEX(ZwDeviceIoControlFile);
 	Zdicf.NewFunc = NewDeviceIoControlFile;
-	SsdtHook(&Zdicf,TRUE);
+
+	KeInitializeMutex(&kMutex,NULL);
 
 	//设置派遣函数
 	// 驱动卸载函数 
@@ -139,6 +148,7 @@ NTSTATUS DriverEntry(__in PDRIVER_OBJECT pDriverObject,
 	//打开、关闭设备函数
 	pDriverObject->MajorFunction[IRP_MJ_CREATE] = CreateClose;
 	pDriverObject->MajorFunction[IRP_MJ_CLOSE]  = CreateClose;
+	pDriverObject->MajorFunction[IRP_MJ_READ]   = ReadPacket;
 	// IOCTL分发函数
 	pDriverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = DeviceControl;
 
@@ -185,6 +195,8 @@ NTSTATUS CreateClose(PDEVICE_OBJECT DeviceObject,PIRP irp)
 //////////////////////////////////////////////////////////////////////////
 NTSTATUS DeviceControl(PDEVICE_OBJECT pDeviceObject,PIRP pIrp)
 {
+	HANDLE hEvent;
+
 	PIO_STACK_LOCATION IrpSp = IoGetCurrentIrpStackLocation(pIrp);
 
 	ULONG Code = IrpSp->Parameters.DeviceIoControl.IoControlCode;
@@ -194,7 +206,26 @@ NTSTATUS DeviceControl(PDEVICE_OBJECT pDeviceObject,PIRP pIrp)
 
 	switch(Code)
 	{
-
+	case StartMonitor:
+		{
+			DbgPrint("Start Monitor\n");
+			SsdtHook(&Zdicf,TRUE);
+		}
+		break;
+	case StopMonitor:
+		{
+			DbgPrint("Stop Monitor\n");
+			SsdtHook(&Zdicf,FALSE);
+		}
+		break;
+	case SetMonitor:
+		{
+			DbgPrint("Set Monitor\n");
+			hEvent = *(HANDLE*)pIoBuff;
+			ObReferenceObjectByHandle(hEvent,GENERIC_ALL,NULL,KernelMode,&pEventObject,NULL);
+			ObDereferenceObject(pEventObject);
+		}
+		break;
 	default:
 		break;
 	}
@@ -281,49 +312,62 @@ NewDeviceIoControlFile(__in HANDLE FileHandle,
 	{
 		return status;
 	}
-	__try{
-		switch (IoControlCode)
-		{
-		case AFD_RECV:
-			{
 
-				dwLen = pAfdTcpInfo->BufferArray->len;
-				pBuf  = pAfdTcpInfo->BufferArray->buf;
-				DbgPrint("[Recv][%d]\n",PsGetCurrentProcessId());
-			}
-			break;
-		case AFD_SEND:
-			{
-				dwLen = pAfdTcpInfo->BufferArray->len;
-				pBuf  = pAfdTcpInfo->BufferArray->buf;
-				DbgPrint("[Send][%d]\n",PsGetCurrentProcessId());
-			}
-			break;
-		case AFD_SENDTO:
-			{
-				dwLen = pAfdUdpSendtoInfo->BufferArray->len;
-				pBuf  = pAfdUdpSendtoInfo->BufferArray->buf;
-				DbgPrint("[Sendto][%d]\n",PsGetCurrentProcessId());
-			}
-			break;
-		case AFD_RECVFROM:
-			{
-				dwLen = pAfdUdpRecvFromInfo->BufferArray->len;
-				pBuf  = pAfdUdpRecvFromInfo->BufferArray->buf;
-				DbgPrint("[Recvfrom][%d]\n",PsGetCurrentProcessId());
-			}
-			break;
-		}
+	if (PsGetCurrentProcessId() == 4076)
+	{
+		return status;
+	}
+
+	if (((PAFD_SEND_INFO)InputBuffer)->BufferArray->len<=5)
+	{
+		return status;
+	}
+	__try{
+		KeWaitForSingleObject(&kMutex,Executive,KernelMode,FALSE,NULL);
+		Packet.len = ((PAFD_SEND_INFO)InputBuffer)->BufferArray->len;
+		Packet.buf = (PCHAR)ExAllocatePool(NonPagedPool,Packet.len);
+		memcpy(Packet.buf,((PAFD_SEND_INFO)InputBuffer)->BufferArray->buf,Packet.len);
+		DbgPrint("Packet:\t%d",Packet.len);
+		KeSetEvent(pEventObject,IO_NO_INCREMENT,FALSE);
+		KeWaitForSingleObject(pEventObject,Executive,KernelMode,FALSE,NULL);
+		KeReleaseMutex(&kMutex,FALSE);
 	}__except(EXCEPTION_EXECUTE_HANDLER)
 	{
 		return status;
 	}
 
-	DbgPrint("%s\n",pBuf);
-	for (i=0;i<dwLen;i++)
+	return status;
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//读取数据
+//////////////////////////////////////////////////////////////////////////
+NTSTATUS ReadPacket(PDEVICE_OBJECT DeviceObject,PIRP irp)
+{
+	ULONG dwRead = 0;
+	NTSTATUS status = STATUS_SUCCESS;
+
+	PIO_STACK_LOCATION stack = IoGetCurrentIrpStackLocation(irp);
+
+	dwRead = stack->Parameters.Read.Length;
+	if (irp->AssociatedIrp.SystemBuffer != NULL)
 	{
-		DbgPrint("%x",pBuf[i]);
+		if (dwRead == 4)
+		{
+			*(ULONG*)irp->AssociatedIrp.SystemBuffer = Packet.len;
+		}
+		else if (dwRead==Packet.len)
+		{
+			memcpy(irp->AssociatedIrp.SystemBuffer,Packet.buf,dwRead);
+		}
 	}
+
+	irp->IoStatus.Status = status;
+	irp->IoStatus.Information = dwRead;
+
+	IoCompleteRequest(irp,IO_NO_INCREMENT);
 
 	return status;
 }

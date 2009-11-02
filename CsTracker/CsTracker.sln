@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Dll", "Dll\Dll.vcproj", "{6
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sys.WXP", "Sys\Sys.WXP.vcproj", "{FFE20461-6C44-4AA8-9F69-428F5091B8EC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestEntry", "TestEntry\TestEntry.vcproj", "{C51E3059-2C00-43E9-B53B-582A457C1BE3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -67,6 +69,22 @@ Global
 		{FFE20461-6C44-4AA8-9F69-428F5091B8EC}.WXP2K checked|Win32.Build.0 = WXP2K checked|Win32
 		{FFE20461-6C44-4AA8-9F69-428F5091B8EC}.WXP2K free|Win32.ActiveCfg = WXP2K free|Win32
 		{FFE20461-6C44-4AA8-9F69-428F5091B8EC}.WXP2K free|Win32.Build.0 = WXP2K free|Win32
+		{C51E3059-2C00-43E9-B53B-582A457C1BE3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C51E3059-2C00-43E9-B53B-582A457C1BE3}.Debug|Win32.Build.0 = Debug|Win32
+		{C51E3059-2C00-43E9-B53B-582A457C1BE3}.Release|Win32.ActiveCfg = Release|Win32
+		{C51E3059-2C00-43E9-B53B-582A457C1BE3}.Release|Win32.Build.0 = Release|Win32
+		{C51E3059-2C00-43E9-B53B-582A457C1BE3}.WXP checked (PREfast)|Win32.ActiveCfg = Release|Win32
+		{C51E3059-2C00-43E9-B53B-582A457C1BE3}.WXP checked (PREfast)|Win32.Build.0 = Release|Win32
+		{C51E3059-2C00-43E9-B53B-582A457C1BE3}.WXP checked|Win32.ActiveCfg = Release|Win32
+		{C51E3059-2C00-43E9-B53B-582A457C1BE3}.WXP checked|Win32.Build.0 = Release|Win32
+		{C51E3059-2C00-43E9-B53B-582A457C1BE3}.WXP free|Win32.ActiveCfg = Release|Win32
+		{C51E3059-2C00-43E9-B53B-582A457C1BE3}.WXP free|Win32.Build.0 = Release|Win32
+		{C51E3059-2C00-43E9-B53B-582A457C1BE3}.WXP2K checked (PREfast)|Win32.ActiveCfg = Release|Win32
+		{C51E3059-2C00-43E9-B53B-582A457C1BE3}.WXP2K checked (PREfast)|Win32.Build.0 = Release|Win32
+		{C51E3059-2C00-43E9-B53B-582A457C1BE3}.WXP2K checked|Win32.ActiveCfg = Release|Win32
+		{C51E3059-2C00-43E9-B53B-582A457C1BE3}.WXP2K checked|Win32.Build.0 = Release|Win32
+		{C51E3059-2C00-43E9-B53B-582A457C1BE3}.WXP2K free|Win32.ActiveCfg = Release|Win32
+		{C51E3059-2C00-43E9-B53B-582A457C1BE3}.WXP2K free|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
