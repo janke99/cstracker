@@ -147,7 +147,7 @@
 			Filter="cpp;c;cxx;def;asm;mc"
 			>
 			<File
-				RelativePath=".\sys.c"
+				RelativePath=".\Sys.c"
 				>
 			</File>
 		</Filter>
@@ -156,7 +156,7 @@
 			Filter="h;hpp;hxx"
 			>
 			<File
-				RelativePath=".\shared.h"
+				RelativePath=".\Header.h"
 				>
 			</File>
 		</Filter>
