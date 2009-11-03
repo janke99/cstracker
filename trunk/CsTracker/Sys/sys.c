@@ -1,4 +1,4 @@
-//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 // Project:	Hook ZwDeviceIoControlFile Function
 // Author:	0xQo
 // Date:	2009-11-01
@@ -7,61 +7,8 @@
 //////////////////////////////////////////////////////////////////////////
 // 头文件包含
 //////////////////////////////////////////////////////////////////////////
-#include <ntddk.h>
-#include "shared.h"
+#include "Header.h"
 
-//////////////////////////////////////////////////////////////////////////
-//宏定义
-//////////////////////////////////////////////////////////////////////////
-#define AFD_RECV		0x12017
-#define AFD_BIND		0x12003
-#define AFD_CONNECT		0x12007
-#define AFD_SET_CONTEXT	0x12047
-#define AFD_RECV		0x12017
-#define AFD_SEND		0x1201f
-#define AFD_SELECT		0x12024
-#define AFD_SENDTO		0x12023 
-#define AFD_RECVFROM	0x1201B
-#define CV				0x1201f
-//SSDT Table
-#pragma pack(1)
-typedef struct ServiceDescriptorEntry {
-	unsigned int *ServiceTableBase;
-	unsigned int *ServiceCounterTableBase;
-	unsigned int NumberOfServices;
-	unsigned char *ParamTableBase;
-} ServiceDescriptorTableEntry_t, *PServiceDescriptorTableEntry_t;
-#pragma pack()
-__declspec(dllimport) ServiceDescriptorTableEntry_t KeServiceDescriptorTable;
-
-typedef NTSTATUS (*NTDEVICEIOCONTROLFILE)(__in HANDLE FileHandle,
-										  __in_opt HANDLE Event,
-										  __in_opt PIO_APC_ROUTINE ApcRoutine,
-										  __in_opt PVOID ApcContext,
-										  __out PIO_STATUS_BLOCK IoStatusBlock,
-										  __in ULONG IoControlCode,
-										  __in_bcount_opt(InputBufferLength) PVOID InputBuffer,
-										  __in ULONG InputBufferLength,
-										  __out_bcount_opt(OutputBufferLength) PVOID OutputBuffer,
-										  __in ULONG OutputBufferLength);
-
-//SSDT Hook 功能的三个宏定义
-//ZwXXXX mov eax,(NtNums)
-//可写的SSDT表的首地址
-PVOID* NewSystemCall;
-#define HOOK_INDEX(Zw2Nt)				*(PULONG)((PUCHAR)Zw2Nt+1)
-#define HOOK(ZwIndex,NewFunc,NtFunc)	NtFunc = (PVOID)InterlockedExchange((PLONG)&NewSystemCall[HOOK_INDEX(ZwIndex)],(LONG)NewFunc)
-#define UNHOOK(ZwIndex,NtFunc)			InterlockedExchange((PLONG)&NewSystemCall[HOOK_INDEX(ZwIndex)],(LONG)NtFunc)
-
-//用于存储Hook信息的结构体
-typedef struct Hook{
-	ULONG	ZwIndex;	//原始函数地址 ZwXXXX
-	ULONG	NewFunc;	//替换函数地址
-	ULONG	NtFunc;		//保存原始函数地址
-}Hook,*pHook;
-
-AFD_WSABUF Packet;
-KMUTEX	kMutex;
 
 //////////////////////////////////////////////////////////////////////////
 //全局变量声明
@@ -75,34 +22,13 @@ UNICODE_STRING symb_link = RTL_CONSTANT_STRING(L"\\DosDevices\\CsTracker");
 Hook Zdicf;
 //事件对象
 PVOID	pEventObject = NULL;
+//传输、过滤结构体
+Filter filter;
+Filter Packet;
 
+KMUTEX	kMutex;
+ULONG	gPid;
 
-//////////////////////////////////////////////////////////////////////////
-//函数声明
-//////////////////////////////////////////////////////////////////////////
-//驱动卸载函数
-VOID OnUnload(PDRIVER_OBJECT DriverObject);
-//Io控制函数
-NTSTATUS DeviceControl(PDEVICE_OBJECT pDeviceObject,PIRP pIrp);
-//打开或者关闭设备
-NTSTATUS CreateClose(PDEVICE_OBJECT DeviceObject,PIRP irp);
-//读取数据
-NTSTATUS ReadPacket(PDEVICE_OBJECT DeviceObject,PIRP irp);
-// Ssdt Hook ZwDeviceIoControlFile
-NTSTATUS SsdtHook(pHook pInfo,BOOLEAN bFlag);
-// New Hook Function
-NTSTATUS
-NTAPI
-NewDeviceIoControlFile(__in HANDLE FileHandle,
-					   __in_opt HANDLE Event,
-					   __in_opt PIO_APC_ROUTINE ApcRoutine,
-					   __in_opt PVOID ApcContext,
-					   __out PIO_STATUS_BLOCK IoStatusBlock,
-					   __in ULONG IoControlCode,
-					   __in_bcount_opt(InputBufferLength) PVOID InputBuffer,
-					   __in ULONG InputBufferLength,
-					   __out_bcount_opt(OutputBufferLength) PVOID OutputBuffer,
-					   __in ULONG OutputBufferLength);
 
 //////////////////////////////////////////////////////////////////////////
 // 驱动入口点函数
@@ -140,6 +66,7 @@ NTSTATUS DriverEntry(__in PDRIVER_OBJECT pDriverObject,
 	Zdicf.ZwIndex = HOOK_INDEX(ZwDeviceIoControlFile);
 	Zdicf.NewFunc = NewDeviceIoControlFile;
 
+	//初始化互斥量
 	KeInitializeMutex(&kMutex,NULL);
 
 	//设置派遣函数
@@ -218,12 +145,18 @@ NTSTATUS DeviceControl(PDEVICE_OBJECT pDeviceObject,PIRP pIrp)
 			SsdtHook(&Zdicf,FALSE);
 		}
 		break;
-	case SetMonitor:
+	case SetEvent:
 		{
 			DbgPrint("Set Monitor\n");
 			hEvent = *(HANDLE*)pIoBuff;
 			ObReferenceObjectByHandle(hEvent,GENERIC_ALL,NULL,KernelMode,&pEventObject,NULL);
 			ObDereferenceObject(pEventObject);
+		}
+		break;
+	case SetFilter:
+		{
+			DbgPrint("Set Filter\n");
+			filter = *(Filter*)pIoBuff;
 		}
 		break;
 	default:
@@ -293,41 +226,39 @@ NewDeviceIoControlFile(__in HANDLE FileHandle,
 								__in ULONG OutputBufferLength)
 {
 
-	NTSTATUS status;
-	int i =0;
-	PAFD_SEND_INFO		pAfdTcpInfo			= InputBuffer;
-	PAFD_SEND_INFO_UDP	pAfdUdpSendtoInfo	= InputBuffer;
-	PAFD_RECV_INFO_UDP	pAfdUdpRecvFromInfo = InputBuffer;
-	ULONG	dwLen = 0;
-	PCHAR	pBuf = NULL;
+	NTSTATUS status = STATUS_UNSUCCESSFUL;
+	USHORT Port;
+	ULONG  Ip;
 	NTDEVICEIOCONTROLFILE NtDeviceIoControlFile = Zdicf.NtFunc;
 
-	status = NtDeviceIoControlFile(FileHandle,Event,ApcRoutine,ApcContext,IoStatusBlock,IoControlCode,InputBuffer,InputBufferLength,OutputBuffer,OutputBufferLength);
-	if (!NT_SUCCESS(status))
-	{
-		return status;
-	}
+	if (IoControlCode!=AFD_SENDTO && IoControlCode!=AFD_RECVFROM)		goto _label;
 
-	if (IoControlCode!=AFD_SEND && IoControlCode!=AFD_RECV && IoControlCode!=AFD_SENDTO && IoControlCode!=AFD_RECVFROM)
-	{
-		return status;
-	}
+	if (filter.Behavior!=0 && filter.Behavior!=IoControlCode)			goto _label;
 
-	if (PsGetCurrentProcessId() == 4076)
-	{
-		return status;
-	}
+	if (PsGetCurrentProcessId() != filter.Pid)		goto _label;
 
-	if (((PAFD_SEND_INFO)InputBuffer)->BufferArray->len<=5)
+	if (((PAFD_SEND_INFO_UDP)InputBuffer)->BufferArray->len < filter.Length)		goto _label;
+
+	if (IoControlCode == AFD_SENDTO)
 	{
-		return status;
+		Port = *(((PTRANSPORT_ADDRESS)((PAFD_SEND_INFO_UDP)InputBuffer)->RemoteAddress)->Address->Address);
+		Ip = *(((PTRANSPORT_ADDRESS)((PAFD_SEND_INFO_UDP)InputBuffer)->RemoteAddress)->Address->Address+sizeof(USHORT));
 	}
+	else
+	{
+		Port = *(((PTRANSPORT_ADDRESS)((PAFD_RECV_INFO_UDP)InputBuffer)->Address)->Address->Address);
+		Ip = *(((PTRANSPORT_ADDRESS)((PAFD_RECV_INFO_UDP)InputBuffer)->Address)->Address->Address+sizeof(USHORT));
+	}
+	if (Port==filter.Port || Ip==filter.Ip)		goto _label;
+
 	__try{
 		KeWaitForSingleObject(&kMutex,Executive,KernelMode,FALSE,NULL);
-		Packet.len = ((PAFD_SEND_INFO)InputBuffer)->BufferArray->len;
-		Packet.buf = (PCHAR)ExAllocatePool(NonPagedPool,Packet.len);
-		memcpy(Packet.buf,((PAFD_SEND_INFO)InputBuffer)->BufferArray->buf,Packet.len);
-		DbgPrint("Packet:\t%d",Packet.len);
+		Packet.Pid = PsGetCurrentProcessId();
+		Packet.Behavior = IoControlCode;
+		Packet.Length = ((PAFD_SEND_INFO_UDP)InputBuffer)->BufferArray->len;
+		Packet.pBuffer = ((PAFD_SEND_INFO_UDP)InputBuffer)->BufferArray->buf;
+		Packet.Port = Port;
+		Packet.Ip = Ip;
 		KeSetEvent(pEventObject,IO_NO_INCREMENT,FALSE);
 		KeWaitForSingleObject(pEventObject,Executive,KernelMode,FALSE,NULL);
 		KeReleaseMutex(&kMutex,FALSE);
@@ -336,7 +267,8 @@ NewDeviceIoControlFile(__in HANDLE FileHandle,
 		return status;
 	}
 
-	return status;
+_label:
+	return NtDeviceIoControlFile(FileHandle,Event,ApcRoutine,ApcContext,IoStatusBlock,IoControlCode,InputBuffer,InputBufferLength,OutputBuffer,OutputBufferLength);
 }
 
 
@@ -354,13 +286,13 @@ NTSTATUS ReadPacket(PDEVICE_OBJECT DeviceObject,PIRP irp)
 	dwRead = stack->Parameters.Read.Length;
 	if (irp->AssociatedIrp.SystemBuffer != NULL)
 	{
-		if (dwRead == 4)
+		if (dwRead == sizeof(Filter))
 		{
-			*(ULONG*)irp->AssociatedIrp.SystemBuffer = Packet.len;
+			memcpy(irp->AssociatedIrp.SystemBuffer,&Packet,dwRead);
 		}
-		else if (dwRead==Packet.len)
+		else if (dwRead==Packet.Length)
 		{
-			memcpy(irp->AssociatedIrp.SystemBuffer,Packet.buf,dwRead);
+			memcpy(irp->AssociatedIrp.SystemBuffer,Packet.pBuffer,dwRead);
 		}
 	}
 
